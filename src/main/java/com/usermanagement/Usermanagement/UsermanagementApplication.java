@@ -1,5 +1,6 @@
 package com.usermanagement.Usermanagement;
 
+import com.usermanagement.Usermanagement.utils.JwtUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,8 @@ public class UsermanagementApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(UsermanagementApplication.class, args);
+
+		jwtTest();
 	}
 
 	@Bean
@@ -29,5 +32,29 @@ public class UsermanagementApplication {
 		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
 		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
 		return new CorsFilter(urlBasedCorsConfigurationSource);
+	}
+
+	public static void jwtTest() {
+		System.out.println("==== JWT TESTS ====");
+
+		// create jwt token with JwtUtils
+		String token = JwtUtils.generateToken("admin","123456");
+
+		// print token to console
+		System.out.println(token);
+
+		// validate token with JwtUtils
+		boolean isValid = JwtUtils.isJwtTokenValid(token);
+
+		// print isValid
+		System.out.println(isValid);
+
+		// get username from jwt token
+		String username = JwtUtils.getUsernameFromJwtToken(token);
+
+		// print username
+		System.out.println(username);
+
+		System.out.println("==== JWT TESTS ====");
 	}
 }
