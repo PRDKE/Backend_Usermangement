@@ -23,6 +23,7 @@ public class UserRegistrationController {
 
     private final UserRegistrationService userRegistrationService;
 
+    // retrieves the user with the matching username
     @GetMapping("/{username}")
     public ResponseEntity<User> findUserByUsername(HttpServletRequest request, @PathVariable String username) {
         // spring check barear token in header
@@ -48,6 +49,8 @@ public class UserRegistrationController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    // retrieves all registered users
+    // this method is not used in the frontend, it's only for test purposes
     @GetMapping("/getAll")
     public ResponseEntity<List<User>> findAllUsers(HttpServletRequest request) {
 
@@ -66,6 +69,7 @@ public class UserRegistrationController {
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
+    // login of a user with username and password
     @PostMapping("/login")
     public ResponseEntity<JwtTokenModel> loginUser(@RequestBody LoginUser user) throws Exception {
         User fetchedUser = userRegistrationService.fetchUserByUsernameAndPassword(user.getUsername(), user.getPassword());
@@ -75,12 +79,14 @@ public class UserRegistrationController {
         return new ResponseEntity<>(jwtToken, HttpStatus.OK);
     }
 
+    // registers a user
     @PostMapping("/new")
     public ResponseEntity<User> registerUser(@RequestBody User user) throws Exception {
         User newUser = userRegistrationService.saveUser(user);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
+    // changes the user information
     @PutMapping("/update")
     public ResponseEntity<User> updateUser(HttpServletRequest request, @RequestBody User user) throws Exception {
         // spring check barear token in header

@@ -24,6 +24,7 @@ public class UserRegistrationService {
         this.userRegistrationRepository = userRegistrationRepository;
     }
 
+    // encrypts the password with the user of Base64
     public String convertToEncrypt(String password) {
         if (password.isEmpty()){
             return null;
@@ -33,30 +34,35 @@ public class UserRegistrationService {
         }
     }
 
+    // retrieves all users
     public List<User> findUsers() {
         return userRegistrationRepository.findAll();
     }
 
+    // retrieves a user with the matching username
     public User findUserByUsername(String username) {
         return userRegistrationRepository.findUserByUsername(username);
     }
 
+    // creates a new user
+    // this method is called during a registration//
+    // throws exception if username already exists
     public User saveUser(User user) throws Exception {
         if(findUserByUsername(user.getUsername()) != null) {
             throw new UsernameAlreadyExistsException("This username is already in use!");
         } else {
             user.setPassword(convertToEncrypt(user.getPassword()));
-            System.out.println(user.getPassword());
             return userRegistrationRepository.save(user);
         }
     }
 
+    // tries to fetch a user with the matching username and password
+    // throws exception if the username and password as a combination do not exist in the database
     public User fetchUserByUsernameAndPassword(String username, String password) throws Exception {
         if (username == null || password == null) {
             throw new BadRequestException("Bad request!");
         }
         password = convertToEncrypt(password);
-        System.out.println(password);
         if(userRegistrationRepository.findUserByUsernameAndPassword(username, password) == null) {
             throw new WrongInputException("Wrong username or password!");
         }
@@ -64,6 +70,7 @@ public class UserRegistrationService {
         return userRegistrationRepository.findUserByUsernameAndPassword(username, password);
     }
 
+    // updates user information of the user with the given username
     public User changeUserInformation(String username, User user) throws Exception {
         if (userRegistrationRepository.findUserByUsername(user.getUsername()) != null && !username.equals(user.getUsername())) {
             throw new UsernameAlreadyExistsException("This username already exists");
